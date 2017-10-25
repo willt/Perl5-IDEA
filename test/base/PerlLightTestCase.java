@@ -18,6 +18,7 @@ package base;
 
 import com.intellij.codeInsight.TargetElementUtil;
 import com.intellij.codeInsight.completion.CompletionType;
+import com.intellij.codeInsight.controlflow.ControlFlow;
 import com.intellij.codeInsight.highlighting.actions.HighlightUsagesAction;
 import com.intellij.codeInsight.intention.IntentionAction;
 import com.intellij.codeInsight.lookup.LookupElement;
@@ -79,6 +80,7 @@ import com.intellij.util.containers.MultiMap;
 import com.perl5.lang.perl.extensions.PerlImplicitVariablesProvider;
 import com.perl5.lang.perl.fileTypes.PerlFileTypeScript;
 import com.perl5.lang.perl.fileTypes.PerlPluginBaseFileType;
+import com.perl5.lang.perl.idea.codeInsight.controlFlow.PerlControlFlowBuilder;
 import com.perl5.lang.perl.idea.configuration.settings.PerlSharedSettings;
 import com.perl5.lang.perl.idea.manipulators.PerlBareStringManipulator;
 import com.perl5.lang.perl.idea.manipulators.PerlStringContentManipulator;
@@ -1032,5 +1034,12 @@ public abstract class PerlLightTestCase extends LightCodeInsightFixtureTestCase 
     }
 
     return sb.toString();
+  }
+
+  protected final void doTestControlFlow() {
+    initWithFileSmartWithoutErrors();
+    ControlFlow controlFlow = PerlControlFlowBuilder.getFor(getFile());
+    final String stringifiedControlFlow = StringUtil.join(controlFlow.getInstructions(), Object::toString, "\n");
+    UsefulTestCase.assertSameLinesWithFile(getTestResultsFilePath(), stringifiedControlFlow);
   }
 }
