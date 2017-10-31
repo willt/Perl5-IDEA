@@ -31,7 +31,7 @@ plugins {
     id "org.jetbrains.intellij" version "0.2.17"
 }
 
-version = "$version$buildNumber"
+version = "$platformVersion$pluginBuild"
 
 apply plugin: 'java'
 sourceCompatibility = javaVersion
@@ -52,7 +52,7 @@ sourceSets {
 
 apply plugin: 'org.jetbrains.intellij'
 intellij {
-    version ideaVersion
+    version "$platformVersion$platformBuild"
     downloadSources Boolean.valueOf(downloadIdeaSource)
     intellij.plugins = ['IntelliLang', 'PsiViewer:3.28.93']
     if (project.hasProperty('idea_sandbox')) {
@@ -94,10 +94,6 @@ test {
 
 repositories {
     mavenCentral()
-}
-
-dependencies {
-    testCompile 'junit:junit:4.+'
 }
 
 project.afterEvaluate {
