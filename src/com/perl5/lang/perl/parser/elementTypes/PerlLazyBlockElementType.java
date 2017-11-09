@@ -27,7 +27,6 @@ import com.intellij.psi.tree.ILazyParseableElementType;
 import com.perl5.lang.perl.PerlLanguage;
 import com.perl5.lang.perl.lexer.adapters.PerlMergingLexerAdapter;
 import com.perl5.lang.perl.psi.impl.PerlCompositeElementImpl;
-import com.perl5.lang.perl.util.PerlReflectionUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
@@ -45,7 +44,7 @@ public abstract class PerlLazyBlockElementType extends ILazyParseableElementType
 
   public PerlLazyBlockElementType(@NotNull @NonNls String debugName, @NotNull Class<? extends PsiElement> clazz) {
     super(debugName, PerlLanguage.INSTANCE);
-    myInstanceFactory = PerlReflectionUtil.createInstanceFactory(clazz, ASTNode.class);
+    myInstanceFactory = PerlElementTypeEx.createInstanceFactory(clazz);
   }
 
   @Override

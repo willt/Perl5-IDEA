@@ -19,10 +19,11 @@ package com.perl5.lang.perl.parser.elementTypes;
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
 import com.perl5.lang.perl.psi.impl.PerlCompositeElementImpl;
-import com.perl5.lang.perl.util.PerlReflectionUtil;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.function.Function;
 
 /**
@@ -37,7 +38,28 @@ public class PerlElementTypeEx extends PerlElementType implements PsiElementProv
 
   public PerlElementTypeEx(@NotNull @NonNls String debugName, Class<? extends PsiElement> clazz) {
     super(debugName);
-    myInstanceFactory = PerlReflectionUtil.createInstanceFactory(clazz, ASTNode.class);
+    myInstanceFactory = createInstanceFactory(clazz);
+  }
+
+  @NotNull
+  static Function<ASTNode, PsiElement> createInstanceFactory(Class<? extends PsiElement> clazz) {
+    Constructor<? extends PsiElement> constructor;
+    try {
+      constructor = clazz.getDeclaredConstructor(ASTNode.class);
+      constructor.setAccessible(true);
+    }
+    catch (NoSuchMethodException e) {
+      throw new RuntimeException(e);
+    }
+
+    return p1 -> {
+      try {
+        return constructor.newInstance(p1);
+      }
+      catch (InstantiationException | IllegalAccessException | InvocationTargetException e) {
+        throw new RuntimeException(e);
+      }
+    };
   }
 
   @NotNull
