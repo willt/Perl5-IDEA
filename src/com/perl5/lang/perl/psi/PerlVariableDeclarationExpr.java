@@ -16,19 +16,19 @@
 
 package com.perl5.lang.perl.psi;
 
-import com.intellij.psi.PsiElement;
 import com.perl5.lang.perl.psi.properties.PerlLexicalScopeMember;
 import com.perl5.lang.perl.psi.properties.PerlNamespaceElementContainer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
- * Created by hurricup on 27.05.2015.
- * Declarations marker
+ * Common interface for my/our/local/state declarations
  */
-public interface PerlVariableDeclarationExpr extends PsiElement, PerlNamespaceElementContainer, PerlLexicalScopeMember {
+public interface PerlVariableDeclarationExpr extends PsiPerlExpr, PerlNamespaceElementContainer, PerlLexicalScopeMember {
   /**
    * Returns explicit declared type
    *
@@ -38,11 +38,13 @@ public interface PerlVariableDeclarationExpr extends PsiElement, PerlNamespaceEl
   String getDeclarationType();
 
   @NotNull
-  Collection<PsiPerlArrayVariable> getArrayVariableList();
+  List<PsiPerlVariableDeclarationElement> getVariableDeclarationElementList();
 
   @NotNull
-  Collection<PsiPerlHashVariable> getHashVariableList();
-
-  @NotNull
-  Collection<PsiPerlScalarVariable> getScalarVariableList();
+  default List<PerlVariable> getVariables() {
+    return getVariableDeclarationElementList().stream()
+      .map(PerlVariableDeclarationElement::getVariable)
+      .filter(Objects::nonNull)
+      .collect(Collectors.toList());
+  }
 }

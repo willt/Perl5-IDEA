@@ -16,31 +16,25 @@
 
 package com.perl5.lang.perl.util;
 
-import com.perl5.lang.perl.psi.PerlAnnotation;
-import com.perl5.lang.perl.psi.PsiPerlAnnotationDeprecated;
-import com.perl5.lang.perl.psi.utils.PerlVariableAnnotations;
+import com.intellij.openapi.util.Comparing;
+import com.perl5.lang.perl.psi.PerlVariable;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 /**
  * Created by hurricup on 08.08.2016.
  */
 public class PerlVariableUtil {
-  @Nullable
-  public static PerlVariableAnnotations aggregateAnnotationsList(List<PerlAnnotation> annotations) {
-    if (annotations.isEmpty()) {
-      return null;
+  /**
+   * Compares two variables by actual type, packageName and name. They can be from different declarations
+   * builds AST
+   */
+  public static boolean equal(@Nullable PerlVariable v1, @Nullable PerlVariable v2) {
+    if (Comparing.equal(v1, v2)) {
+      return true;
     }
-
-    PerlVariableAnnotations myAnnotations = new PerlVariableAnnotations();
-
-    for (PerlAnnotation annotation : annotations) {
-      if (annotation instanceof PsiPerlAnnotationDeprecated) {
-        myAnnotations.setIsDeprecated();
-      }
-    }
-
-    return myAnnotations;
+    assert v1 != null && v2 != null;
+    return v1.getActualType().equals(v2.getActualType()) &&
+           Comparing.equal(v1.getPackageName(), v2.getPackageName()) &&
+           Comparing.equal(v1.getName(), v2.getName());
   }
 }
